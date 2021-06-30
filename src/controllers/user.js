@@ -13,6 +13,14 @@ function userValidateSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+function loginSchema(req, res, next) {
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().min(6).required(),
+  });
+  validateRequest(req, next, schema);
+}
+
 async function login(req, res, next) {
   try {
     const user = await userService.authenticate(req.body);
@@ -82,6 +90,7 @@ async function deleteUser(req, res, next) {
 
 module.exports = {
   userValidateSchema,
+  loginSchema,
   login,
   register,
   // getAllUser,

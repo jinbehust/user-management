@@ -25,17 +25,18 @@ async function authenticate({ username, password }) {
   return { ...omitHash(user.get()), token };
 }
 
-async function getAll() {
+async function getAllUser() {
   const users = await db.User.findAll();
+  console.log(users);
   return users;
 }
 
-async function getById(id) {
+async function getUserById(id) {
   const user = await getUser(id);
   return user;
 }
 
-async function create(params) {
+async function createUser(params) {
   // validate
   if (await db.User.findOne({ where: { username: params.username } })) {
     throw new Error(`Username "${params.username}" is already taken`);
@@ -51,7 +52,7 @@ async function create(params) {
   await db.User.create(params);
 }
 
-async function update(id, params) {
+async function updateUser(id, params) {
   const user = await getUser(id);
 
   // validate
@@ -73,16 +74,16 @@ async function update(id, params) {
   return omitHash(user.get());
 }
 
-async function _delete(id) {
+async function deleteUser(id) {
   const user = await getUser(id);
   await user.destroy();
 }
 
 module.exports = {
   authenticate,
-  getAll,
-  getById,
-  create,
-  update,
-  delete: _delete,
+  getAllUser,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
 };

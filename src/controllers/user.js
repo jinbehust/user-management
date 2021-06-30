@@ -2,7 +2,7 @@ const Joi = require('joi');
 const userService = require('../services/user');
 const validateRequest = require('../../_middlewares/validate-request');
 
-function authenticateSchema(req, res, next) {
+function loginSchema(req, res, next) {
   const schema = Joi.object({
     username: Joi.string().required(),
     password: Joi.string().required(),
@@ -10,7 +10,7 @@ function authenticateSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
-async function authenticate(req, res, next) {
+async function login(req, res, next) {
   try {
     const user = await userService.authenticate(req.body);
     return res.json(user);
@@ -32,36 +32,32 @@ function registerSchema(req, res, next) {
 
 async function register(req, res, next) {
   try {
-    await userService.create(req.body);
+    await userService.createUser(req.body);
     return res.json({ message: 'Registration successful' });
   } catch (err) {
     return next();
   }
 }
 
-async function getAll(req, res, next) {
+async function getAllUser(req, res, next) {
   try {
-    const users = await userService.getAll();
+    const users = await userService.getAllUser();
     return res.json(users);
   } catch (err) {
     return next();
   }
 }
 
-async function getById(req, res, next) {
+async function getUserById(req, res, next) {
   try {
-    const user = await userService.getById(req.params.id);
+    const user = await userService.getUserById(req.params.id);
     return res.json(user);
   } catch (err) {
     return next();
   }
 }
 
-function getCurrent(req, res) {
-  return res.json(req.user);
-}
-
-async function update(req, res, next) {
+async function updateUser(req, res, next) {
   try {
     const user = await userService.update(req.params.id, req.body);
     return res.json(user);
@@ -80,9 +76,9 @@ function updateSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
-async function _delete(req, res, next) {
+async function deleteUser(req, res, next) {
   try {
-    await userService.delete(req.params.id);
+    await userService.deleteUser(req.params.id);
     return res.json({ message: 'User deleted successfully' });
   } catch (err) {
     return next();
@@ -90,14 +86,13 @@ async function _delete(req, res, next) {
 }
 
 module.exports = {
-  authenticateSchema,
-  authenticate,
+  loginSchema,
+  login,
   registerSchema,
   register,
-  getAll,
-  getById,
-  getCurrent,
-  update,
+  getAllUser,
+  getUserById,
+  updateUser,
   updateSchema,
-  _delete,
+  deleteUser,
 };

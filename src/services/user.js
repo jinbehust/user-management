@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { Op } = require('sequelize');
 const db = require('../../_helpers/db');
 const config = require('../../config');
 
@@ -21,19 +22,46 @@ async function authenticate({ username, password }) {
   if (!user || !(await bcrypt.compare(password, user.hash))) { throw new Error('Username or password is incorrect'); }
 
   // authentication successful
-  const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '10h' });
+  const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '6h' });
   return { ...omitHash(user.get()), token };
 }
 
-async function getAllUser() {
-  const users = await db.User.findAll();
-  console.log(users);
-  return users;
-}
+// async function getAllUser() {
+//   const users = await db.User.findAll();
+//   console.log(users);
+//   return users;
+// }
 
 async function getUserById(id) {
   const user = await getUser(id);
   return user;
+}
+
+const getPagination = (page, size) => {
+  const limit = size ? +size : 10;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
+const getPagingData = (data, page, limit) => {
+  const { count: userItems, rows: users } = data;
+  const currentPage = page ? +page : 0;
+  const totalPages = Math.ceil(userItems / limit);
+
+  return {
+    userItems, users, totalPages, currentPage,
+  };
+};
+
+async function filterByUsername(page, size, username) {
+  const condition = username ? { username: { [Op.like]: `%${username}%` } } : null;
+  const { limit, offset } = getPagination(page, size);
+  const data = await db.User.findAndCountAll({
+    where: condition, limit, offset,
+  });
+  const response = getPagingData(data, page, limit);
+  return response;
 }
 
 async function createUser(params) {
@@ -81,8 +109,9 @@ async function deleteUser(id) {
 
 module.exports = {
   authenticate,
-  getAllUser,
+  // getAllUser,
   getUserById,
+  filterByUsername,
   createUser,
   updateUser,
   deleteUser,

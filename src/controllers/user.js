@@ -2,10 +2,13 @@ const Joi = require('joi');
 const userService = require('../services/user');
 const validateRequest = require('../../_middlewares/validate-request');
 
-function loginSchema(req, res, next) {
+function userValidateSchema(req, res, next) {
   const schema = Joi.object({
+    fullName: Joi.string().required(),
     username: Joi.string().required(),
-    password: Joi.string().required(),
+    email: Joi.string().email().required(),
+    dateOfBirth: Joi.date().raw().required(),
+    password: Joi.string().min(6).required(),
   });
   validateRequest(req, next, schema);
 }
@@ -19,32 +22,34 @@ async function login(req, res, next) {
   }
 }
 
-function registerSchema(req, res, next) {
-  const schema = Joi.object({
-    fullName: Joi.string().required(),
-    username: Joi.string().required(),
-    email: Joi.string().email().required(),
-    dateOfBirth: Joi.date().raw().required(),
-    password: Joi.string().min(6).required(),
-  });
-  validateRequest(req, next, schema);
-}
-
 async function register(req, res, next) {
   try {
     await userService.createUser(req.body);
     return res.json({ message: 'Registration successful' });
   } catch (err) {
-    return next();
+    return next(err);
   }
 }
 
-async function getAllUser(req, res, next) {
+// async function getAllUser(req, res, next) {
+//   try {
+//     const users = await userService.getAllUser();
+//     return res.json(users);
+//   } catch (err) {
+//     return next(err);
+//   }
+// }
+
+async function getAllOrFilterByUsername(req, res, next) {
   try {
-    const users = await userService.getAllUser();
+    if (!req.query.username) {
+      req.query.username = '';
+    }
+    const { page, size, username } = req.query;
+    const users = await userService.filterByUsername(page, size, username);
     return res.json(users);
   } catch (err) {
-    return next();
+    return next(err);
   }
 }
 
@@ -53,27 +58,17 @@ async function getUserById(req, res, next) {
     const user = await userService.getUserById(req.params.id);
     return res.json(user);
   } catch (err) {
-    return next();
+    return next(err);
   }
 }
 
 async function updateUser(req, res, next) {
   try {
-    const user = await userService.update(req.params.id, req.body);
+    const user = await userService.updateUser(req.params.id, req.body);
     return res.json(user);
   } catch (err) {
-    return next();
+    return next(err);
   }
-}
-function updateSchema(req, res, next) {
-  const schema = Joi.object({
-    fullName: Joi.string().required(),
-    username: Joi.string().required(),
-    email: Joi.string().email().required(),
-    dateOfBirth: Joi.date().raw().required(),
-    password: Joi.string().min(6).required(),
-  });
-  validateRequest(req, next, schema);
 }
 
 async function deleteUser(req, res, next) {
@@ -81,18 +76,17 @@ async function deleteUser(req, res, next) {
     await userService.deleteUser(req.params.id);
     return res.json({ message: 'User deleted successfully' });
   } catch (err) {
-    return next();
+    return next(err);
   }
 }
 
 module.exports = {
-  loginSchema,
+  userValidateSchema,
   login,
-  registerSchema,
   register,
-  getAllUser,
+  // getAllUser,
   getUserById,
+  getAllOrFilterByUsername,
   updateUser,
-  updateSchema,
   deleteUser,
 };

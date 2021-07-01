@@ -7,4 +7,5 @@ module.exports = {
     database: process.env.DB_NAME,
   },
   secret: process.env.SECRET,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
 };

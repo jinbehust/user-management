@@ -22,15 +22,26 @@ async function authenticate({ username, password }) {
   if (!user || !(await bcrypt.compare(password, user.hash))) { throw new Error('Username or password is incorrect'); }
 
   // authentication successful
-  const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '6h' });
-  return { ...omitHash(user.get()), token };
+  const accessToken = jwt.sign({ username: user.username }, config.secret, { expiresIn: '1h' });
+  const refreshToken = jwt.sign({ username: user.username }, config.refreshTokenSecret, { expiresIn: '24h' });
+  const response = {
+    status: 'Logged in',
+    accessToken,
+    refreshToken,
+  };
+  return response;
 }
 
-// async function getAllUser() {
-//   const users = await db.User.findAll();
-//   console.log(users);
-//   return users;
-// }
+async function getAccessToken({ username, refreshToken }) {
+  if (refreshToken) {
+    const user = await db.User.scope('withHash').findOne({ where: { username } });
+    const token = jwt.sign({ username: user.username }, config.secret, { expiresIn: '1h' });
+    const response = {
+      token,
+    };
+    return response;
+  } throw new Error('Invalid request');
+}
 
 async function getUserById(id) {
   const user = await getUser(id);
@@ -109,7 +120,7 @@ async function deleteUser(id) {
 
 module.exports = {
   authenticate,
-  // getAllUser,
+  getAccessToken,
   getUserById,
   filterByUsername,
   createUser,

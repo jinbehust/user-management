@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const errorHandler = require('./_middlewares/error-handler');
 const userRouter = require('./src/routes/user');
+const tokenRouter = require('./src/routes/token');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // API routes
 app.use('/users', userRouter);
+app.use('/token', tokenRouter);
 
 // Global error handler
 app.use(errorHandler);

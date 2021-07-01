@@ -2,7 +2,7 @@ const Joi = require('joi');
 const userService = require('../services/user');
 const validateRequest = require('../../_middlewares/validate-request');
 
-function userValidateSchema(req, res, next) {
+function signupSchema(req, res, next) {
   const schema = Joi.object({
     fullName: Joi.string().required(),
     username: Joi.string().required(),
@@ -21,10 +21,28 @@ function loginSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+function updateSchema(req, res, next) {
+  const schema = Joi.object({
+    fullName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    dateOfBirth: Joi.date().raw().required(),
+  });
+  validateRequest(req, next, schema);
+}
+
 async function login(req, res, next) {
   try {
-    const user = await userService.authenticate(req.body);
-    return res.json(user);
+    const response = await userService.authenticate(req.body);
+    return res.json(response);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+async function getAccessToken(req, res, next) {
+  try {
+    const response = await userService.getAccessToken(req.body);
+    return res.json(response);
   } catch (err) {
     return next(err);
   }
@@ -38,15 +56,6 @@ async function register(req, res, next) {
     return next(err);
   }
 }
-
-// async function getAllUser(req, res, next) {
-//   try {
-//     const users = await userService.getAllUser();
-//     return res.json(users);
-//   } catch (err) {
-//     return next(err);
-//   }
-// }
 
 async function getAllOrFilterByUsername(req, res, next) {
   try {
@@ -89,10 +98,12 @@ async function deleteUser(req, res, next) {
 }
 
 module.exports = {
-  userValidateSchema,
+  signupSchema,
   loginSchema,
+  updateSchema,
   login,
   register,
+  getAccessToken,
   // getAllUser,
   getUserById,
   getAllOrFilterByUsername,

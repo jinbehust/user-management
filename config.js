@@ -6,6 +6,10 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
   },
+  facbook: {
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+  },
   secret: process.env.SECRET,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
 };

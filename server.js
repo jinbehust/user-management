@@ -6,7 +6,7 @@ const helmet = require('helmet');
 require('dotenv').config();
 const errorHandler = require('./_middlewares/error-handler');
 const userRouter = require('./src/routes/user');
-const tokenRouter = require('./src/routes/token');
+const authRouter = require('./src/routes/token');
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // API routes
 app.use('/users', userRouter);
-app.use('/token', tokenRouter);
+app.use('/auth', authRouter);
 
 // Global error handler
 app.use(errorHandler);

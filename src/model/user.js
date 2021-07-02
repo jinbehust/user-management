@@ -18,16 +18,9 @@ function model(sequelize) {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    // isRemoved: {
-    //   type: DataTypes.BOOLEAN,
-    //   allowNull: false,
-    //   defaultValue: false,
-    // },
-    // isAdmin: {
-    //   type: DataTypes.BOOLEAN,
-    //   allowNull: false,
-    //   defaultValue: false,
-    // },
+    facebookId: {
+      type: DataTypes.STRING,
+    },
     isActive: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -35,7 +28,6 @@ function model(sequelize) {
     },
     hash: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
   };
 

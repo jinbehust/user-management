@@ -15,8 +15,23 @@ function model(sequelize) {
       allowNull: false,
     },
     dateOfBirth: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: false,
+    },
+    // isRemoved: {
+    //   type: DataTypes.BOOLEAN,
+    //   allowNull: false,
+    //   defaultValue: false,
+    // },
+    // isAdmin: {
+    //   type: DataTypes.BOOLEAN,
+    //   allowNull: false,
+    //   defaultValue: false,
+    // },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     hash: {
       type: DataTypes.STRING,

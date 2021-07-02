@@ -7,6 +7,8 @@ function signupSchema(req, res, next) {
     fullName: Joi.string().required(),
     username: Joi.string().required(),
     email: Joi.string().email().required(),
+    isAdmin: Joi.boolean(),
+    isActive: Joi.boolean(),
     dateOfBirth: Joi.date().raw().required(),
     password: Joi.string().min(6).required(),
   });
@@ -23,9 +25,9 @@ function loginSchema(req, res, next) {
 
 function updateSchema(req, res, next) {
   const schema = Joi.object({
-    fullName: Joi.string().required(),
-    email: Joi.string().email().required(),
-    dateOfBirth: Joi.date().raw().required(),
+    fullName: Joi.string(),
+    email: Joi.string().email(),
+    dateOfBirth: Joi.date().raw(),
   });
   validateRequest(req, next, schema);
 }
@@ -81,8 +83,8 @@ async function getUserById(req, res, next) {
 
 async function updateUser(req, res, next) {
   try {
-    const user = await userService.updateUser(req.params.id, req.body);
-    return res.json(user);
+    const response = await userService.updateUser(req.params.id, req.body);
+    return res.json(response);
   } catch (err) {
     return next(err);
   }

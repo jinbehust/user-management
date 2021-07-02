@@ -45,7 +45,7 @@ async function getAccessToken({ username, refreshToken }) {
 
 async function getUserById(id) {
   const user = await getUser(id);
-  return user;
+  return omitHash(user.get());
 }
 
 const getPagination = (page, size) => {
@@ -110,7 +110,7 @@ async function updateUser(id, params) {
   Object.assign(user, params);
   await user.save();
 
-  return omitHash(user.get());
+  return { status: 'Updated!' };
 }
 
 async function deleteUser(id) {

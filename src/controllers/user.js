@@ -7,9 +7,8 @@ function signupSchema(req, res, next) {
     fullName: Joi.string().required(),
     username: Joi.string().required(),
     email: Joi.string().email().required(),
-    isAdmin: Joi.boolean(),
-    isActive: Joi.boolean(),
     dateOfBirth: Joi.date().raw().required(),
+    facebookId: Joi.string(),
     password: Joi.string().min(6).required(),
   });
   validateRequest(req, next, schema);

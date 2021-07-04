@@ -4,26 +4,26 @@ function model(sequelize) {
   const attributes = {
     fullName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
     username: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
     dateOfBirth: {
       type: DataTypes.DATE,
-      allowNull: false,
+      // allowNull: false,
     },
     facebookId: {
       type: DataTypes.STRING,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      // allowNull: false,
       defaultValue: false,
     },
     hash: {

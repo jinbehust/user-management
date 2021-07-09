@@ -1,8 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
-const https = require('https');
-const fs = require('fs');
 const passport = require('passport');
 const helmet = require('helmet');
 require('dotenv').config();
@@ -12,18 +9,6 @@ const authRouter = require('./src/routes/auth');
 
 const app = express();
 
-app.all('*', (req, res, next) => {
-  if (req.secure) {
-    return next();
-  }
-  return res.redirect(
-    307,
-    `https://${req.hostname}:${app.get('secPort')}${req.url}`,
-  );
-});
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -38,7 +23,7 @@ app.use('/users', userRouter);
 app.use('/auth', authRouter);
 
 app.use('/', (req, res) => {
-  res.send('Hello from ssl server');
+  res.send('Hello. This is home page.');
 });
 
 // Global error handler
@@ -63,18 +48,6 @@ function normalizePort(val) {
 const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
-app.set('secPort', port + 443);
-
-const options = {
-  key: fs.readFileSync('./ssl/private.key'),
-  cert: fs.readFileSync('./ssl/certificate.pem'),
-};
-
-const secureServer = https.createServer(options, app);
-
-secureServer.listen(app.get('secPort'), () => {
-  console.log('Secure server listening on port', app.get('secPort'));
-});
 
 // Start Server
 app.listen(port, () => console.log(`Server listening on port ${port}`));

@@ -82,8 +82,8 @@ async function getUserById(req, res, next) {
 
 async function updateUser(req, res, next) {
   try {
-    const response = await userService.updateUser(req.params.id, req.body);
-    return res.json(response);
+    const user = await userService.updateUser(req.params.id, req.body);
+    return res.json(user);
   } catch (err) {
     return next(err);
   }
@@ -91,8 +91,17 @@ async function updateUser(req, res, next) {
 
 async function deleteUser(req, res, next) {
   try {
-    await userService.deleteUser(req.params.id);
-    return res.json({ message: 'User deleted successfully' });
+    const response = await userService.deleteUser(req.params.id);
+    return res.json(response);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+async function restoreUser(req, res, next) {
+  try {
+    const response = await userService.restoreUser(req.params.id);
+    return res.json(response);
   } catch (err) {
     return next(err);
   }
@@ -110,4 +119,5 @@ module.exports = {
   getAllOrFilterByUsername,
   updateUser,
   deleteUser,
+  restoreUser,
 };

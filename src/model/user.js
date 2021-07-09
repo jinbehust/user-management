@@ -21,10 +21,12 @@ function model(sequelize) {
     facebookId: {
       type: DataTypes.STRING,
     },
-    isActive: {
+    isActived: {
       type: DataTypes.BOOLEAN,
-      // allowNull: false,
       defaultValue: false,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
     },
     hash: {
       type: DataTypes.STRING,
@@ -40,6 +42,7 @@ function model(sequelize) {
       // include hash with this scope
       withHash: { attributes: {} },
     },
+    paranoid: true,
   };
 
   return sequelize.define('user', attributes, options);
